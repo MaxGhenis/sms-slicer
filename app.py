@@ -89,7 +89,9 @@ def main():
                     status_text.text(status_msg)
                     logger.debug(f"Progress update: {status_msg}")
                 except Exception as e:
-                    logger.error(f"Error updating progress: {str(e)}")
+                    logger.error(
+                        f"Error updating progress: {str(e)}", exc_info=True
+                    )
 
                 # Update chart
                 with chart_container:
