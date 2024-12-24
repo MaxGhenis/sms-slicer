@@ -2,7 +2,7 @@ import streamlit as st
 from pathlib import Path
 import platform
 from file_handler import find_sms_backups, open_file_location, validate_file
-import sample_data.generate_sample_data as generate_sample_data
+from sample_data import generate_sample_data
 
 
 def show_file_selector():

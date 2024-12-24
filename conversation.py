@@ -160,27 +160,30 @@ class ConversationAnalyzer:
         try:
             for event, elem in context:
                 if elem.tag == "sms":
+                    msg_date = int(elem.get("date", 0))
                     if (
                         elem.get("address") == phone
-                        and start_timestamp
-                        <= int(elem.get("date", 0))
-                        <= end_timestamp
+                        and start_timestamp <= msg_date <= end_timestamp
                     ):
+                        # Convert timestamp to proper ISO format
+                        dt = datetime.fromtimestamp(msg_date / 1000)
+                        formatted_date = dt.strftime("%Y-%m-%d %H:%M:%S")
 
                         msg = {
-                            "timestamp": elem.get("readable_date"),
+                            "timestamp": formatted_date,
                             "type": (
                                 "sent"
                                 if elem.get("type") == "2"
                                 else "received"
                             ),
                             "body": elem.get("body", ""),
+                            "raw_timestamp": msg_date,  # Keep raw timestamp for sorting
                         }
                         messages.append(msg)
                 elem.clear()
 
-            # Sort by timestamp
-            messages.sort(key=lambda x: x["timestamp"])
+            # Sort by raw timestamp
+            messages.sort(key=lambda x: x["raw_timestamp"])
 
             if output_format == "txt":
                 with open(output_path, "w", encoding="utf-8") as f:
